@@ -1,6 +1,6 @@
 <?php
 session_start();  // 啟動 Session，檢查是否有登入狀態
-
+header('Content-Type: text/html; charset=UTF-8');
 // 檢查是否已經登入
 $isLoggedIn = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
 ?>
@@ -60,7 +60,7 @@ $isLoggedIn = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
 
 <!-- 工作列 -->
 <nav class="navbar">
-    <a href="#">首頁</a>
+    <a href="#">財務部團購登記系統</a>
     <?php if ($isLoggedIn): ?>
         <div class="d-flex align-items-center ml-auto">
             <!-- 通知鈴鐺 -->
@@ -93,11 +93,15 @@ $isLoggedIn = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
         <!-- 查看正在進行活動 -->
         <div class="col-md-4">
             <div class="card">
-                <img src="https://via.placeholder.com/150" class="card-img-top" alt="活動圖片">
+            <img src="uploads/activity.jpg" class="card-img-top" alt="活動圖片" style="width: 30%; height: auto;">
                 <div class="card-body">
                     <h5 class="card-title">查看正在進行活動</h5>
                     <p class="card-text">查看目前所有正在進行中的活動，了解活動狀況。</p>
-                    <a href="view_activity.php" class="btn btn-primary">查看活動</a>
+                    <?php if ($isLoggedIn): ?>
+                        <a href="view_activity.php" class="btn btn-primary">查看活動</a>
+                    <?php else: ?>
+                        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">請先登入</a>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -105,7 +109,7 @@ $isLoggedIn = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
         <!-- 上傳提案 -->
         <div class="col-md-4">
             <div class="card">
-                <img src="https://via.placeholder.com/150" class="card-img-top" alt="上傳提案">
+            <img src="uploads/upload.png" class="card-img-top" alt="活動圖片" style="width: 30%; height: auto;">
                 <div class="card-body">
                     <h5 class="card-title">上傳提案</h5>
                     <p class="card-text">提交您的提案，與我們分享您的創意。</p>
@@ -120,16 +124,28 @@ $isLoggedIn = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
         <!-- 花費歷史 -->
         <div class="col-md-4">
             <div class="card">
-                <img src="https://via.placeholder.com/150" class="card-img-top" alt="花費歷史">
+            <img src="uploads/cost.png" class="card-img-top" alt="活動圖片" style="width: 30%; height: auto;">
                 <div class="card-body">
-                    <h5 class="card-title">花費歷史</h5>
-                    <p class="card-text">查看您的花費歷史，了解過去的支出情況。</p>
-                    <a href="#" class="btn btn-primary">查看歷史</a>
+                    <h5 class="card-title">已參與活動</h5>
+                    <p class="card-text">查看您有加入的團購及數量。</p>
+                    <a href="history.php" class="btn btn-primary">查看歷史</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<div class="col-md-4 mx-auto mt-4" style="max-width: 300px;">
+    <div class="card">
+        <img src="uploads/countdown.png" class="card-img-top" alt="限時活動圖片" style="width: 60%; height: auto; margin: auto;">
+        <div class="card-body text-center">
+            <h5 class="card-title">限時活動</h5>
+            <p class="card-text">搶先參加期間限定的團購活動，不容錯過！</p>
+            <a href="list.php" class="btn btn-primary">查看限時活動</a>
+        </div>
+    </div>
+</div>
+
 
 <!-- 上傳提案選擇 modal -->
 <div class="modal fade" id="proposalModal" tabindex="-1" aria-labelledby="proposalModalLabel" aria-hidden="true">
@@ -142,9 +158,9 @@ $isLoggedIn = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
             <div class="modal-body">
                 <p>請選擇您要上傳的提案類型：</p>
                 <div class="d-flex justify-content-between">
+                    <!-- 當按下一般團購時跳轉到 casual.php -->
                     <button type="button" class="btn btn-outline-primary modal-btn" onclick="window.location.href='casual.php';" data-bs-dismiss="modal">一般團購</button>
-                    <button type="button" class="btn btn-outline-primary modal-btn" onclick="alert('選擇出國團購')">出國團購</button>
-                    <button type="button" class="btn btn-outline-primary modal-btn" onclick="alert('選擇其他')">其他</button>
+                    <button type="button" class="btn btn-outline-primary modal-btn" onclick="window.location.href='abroad.php';" data-bs-dismiss="modal">出遊版本</button>
                 </div>
             </div>
         </div>
@@ -197,6 +213,10 @@ $isLoggedIn = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
                     <div class="mb-3">
                         <label for="registerBirthday" class="form-label">生日 (民國年)</label>
                         <input type="text" class="form-control" id="registerBirthday" name="birthday" required placeholder="例如：0860831">
+                    </div>
+                    <div class="mb-3">
+                        <label for="registerPassword" class="form-label">密碼</label>
+                        <input type="password" class="form-control" id="registerPassword" name="password" required>
                     </div>
                     <button type="submit" class="btn btn-custom">註冊</button>
                 </form>

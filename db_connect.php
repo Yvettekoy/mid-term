@@ -1,14 +1,17 @@
 <?php
-$host = 'localhost'; // MySQL 伺服器地址
-$user = 'root';      // MySQL 使用者名稱
-$password = '';      // MySQL 密碼，如果沒有設定密碼，請留空
-$database = 'user_db'; // 資料庫名稱
+$servername = "localhost";
+$username = "root";
+$password = "";
+$database = "user_db";
 
-// 建立資料庫連線
-$conn = new mysqli($host, $user, $password, $database);
+// 建立連線
+$conn = new mysqli($servername, $username, $password, $database);
 
-// 檢查是否連線成功
+// 檢查連線
 if ($conn->connect_error) {
-    die("資料庫連線失敗: " . $conn->connect_error);
+    die("連線失敗: " . $conn->connect_error);
 }
+
+// 設定字元集為 utf8mb4
+$conn->set_charset("utf8mb4");
 ?>

@@ -16,6 +16,9 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);  // 如果連接失敗，顯示錯誤
 }
 
+// 設定字符集為 utf8mb4
+$conn->set_charset("utf8mb4");  // 確保資料庫連接使用 utf8mb4 編碼
+
 // 處理表單提交
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // 確保至少填寫了一個欄位
