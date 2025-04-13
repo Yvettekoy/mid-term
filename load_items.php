@@ -1,6 +1,12 @@
 <?php
+// 設定回應格式與字元集
+header('Content-Type: application/json; charset=utf-8');
+
 // 連接資料庫
 $conn = new mysqli('localhost', 'root', '', 'user_db');
+
+// 設定字元集為 utf8mb4
+$conn->set_charset("utf8mb4");
 
 // 檢查資料庫連接
 if ($conn->connect_error) {

@@ -1,4 +1,4 @@
-<?php
+<?php 
 session_start();
 require 'db_connect.php';
 
@@ -17,6 +17,17 @@ $result = $conn->query($query);
     <title>活動列表</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        .btn-glow:hover {
+            box-shadow: 0 0 10px rgba(0, 123, 255, 0.6);
+            transform: translateY(-2px);
+        }
+        .card-img-top {
+            max-height: 200px;
+            object-fit: cover;
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -33,7 +44,13 @@ $result = $conn->query($query);
 </nav>
 
 <div class="container mt-4">
-    <h2>正在進行的活動</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>正在進行的活動</h2>
+        <a href="casual.php" class="btn btn-primary btn-glow">
+            <i class="fas fa-plus-circle me-1"></i> 新增活動
+        </a>
+    </div>
+
     <div class="row">
         <?php while ($row = $result->fetch_assoc()): 
             $activity_id = $row['id'];
@@ -49,7 +66,6 @@ $result = $conn->query($query);
                 $item_names[] = $item_row['item_name'];
             }
 
-            // 每個項目的使用者數量資料
             $chart_data = [];
             foreach ($item_names as $item_name) {
                 $user_query = "SELECT u.name, SUM(i.quantity) as total FROM item_statistics i 
@@ -71,7 +87,8 @@ $result = $conn->query($query);
         ?>
             <div class="col-md-6">
                 <div class="card mb-4">
-                    <img src="uploads/<?php echo htmlspecialchars($row['image']); ?>" class="card-img-top" style="max-height: 200px; object-fit: cover;">
+                    <!-- 圖片顯示：若沒有圖片則使用預設圖片 -->
+                    <img src="uploads/<?php echo empty($row['image']) ? 'default.jpg' : htmlspecialchars($row['image']); ?>" class="card-img-top">
                     <div class="card-body">
                         <h5 class="card-title"><?php echo htmlspecialchars($row['store_name']); ?></h5>
                         <ul class="list-group">
@@ -98,6 +115,22 @@ $result = $conn->query($query);
                             <canvas id="chart-<?php echo $activity_id; ?>"></canvas>
                         </div>
 
+                        <?php if (!empty($row['website'])): ?>
+                            <p class="mt-2">
+                                <strong><i class="fas fa-link me-1"></i>網址：</strong>
+                                <a href="<?php echo htmlspecialchars($row['website']); ?>" target="_blank">
+                                    <?php echo htmlspecialchars($row['website']); ?>
+                                </a>
+                            </p>
+                        <?php endif; ?>
+
+                        <?php if (!empty($row['other'])): ?>
+                            <p class="mt-2">
+                                <strong><i class="fas fa-sticky-note me-1"></i>其他補充說明：</strong><br>
+                                <?php echo nl2br(htmlspecialchars($row['other'])); ?>
+                            </p>
+                        <?php endif; ?>
+
                         <script>
                         const ctx<?php echo $activity_id; ?> = document.getElementById('chart-<?php echo $activity_id; ?>');
 
@@ -112,7 +145,6 @@ $result = $conn->query($query);
                                     $user_colors = [];
                                     $user_names_used = [];
 
-                                    // 找出所有 user_names
                                     foreach ($chart_data as $item_entries) {
                                         foreach ($item_entries as $entry) {
                                             $user_names_used[$entry['user_name']] = true;
@@ -135,12 +167,12 @@ $result = $conn->query($query);
                                                 $found = false;
                                                 foreach ($entries as $entry) {
                                                     if ($entry['user_name'] == $username) {
-                                                        echo $entry['total'] . ",";
+                                                        echo $entry['total'] . ","; 
                                                         $found = true;
                                                         break;
                                                     }
                                                 }
-                                                if (!$found) echo "0,";
+                                                if (!$found) echo "0,"; 
                                             }
                                             ?>
                                         ],
@@ -197,7 +229,7 @@ $(document).ready(function () {
     $(".add-item-btn").click(function () {
         const activityId = $(this).data("activity");
         const itemName = $(".item-name-" + activityId).val().trim();
-        const itemQty = $(".item-qty-" + activityId).val().trim() || 0;  // 默認為0
+        const itemQty = $(".item-qty-" + activityId).val().trim() || 0;
 
         if (!itemName) {
             alert("請輸入有效的品項名稱！");
@@ -224,7 +256,7 @@ $(document).ready(function () {
 
         $("#modalItemName").val(itemName);
         $("#modalActivityId").val(activityId);
-        $("#modalQuantity").val('');  // 清空數量
+        $("#modalQuantity").val('');
     });
 
     $("#addItemForm").submit(function (e) {

@@ -22,3 +22,4 @@ $stmt->execute();
 
 header("Location: view_activity.php?upload_id=" . $upload_id);
 exit();
+?>

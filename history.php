@@ -3,6 +3,7 @@ session_start();
 require 'db_connect.php';
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
+
 // 檢查是否已登入
 $isLoggedIn = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
 $user_id = $_SESSION['user_id'] ?? null;
@@ -27,7 +28,7 @@ $result_item_statistics = $stmt_item_statistics->get_result();
 
 // 查詢使用者發起的提案（casual_uploads）
 $query_casual_uploads = "
-    SELECT id, store_name, description, created_at
+    SELECT id, store_name, other, created_at
     FROM casual_uploads
     WHERE user_id = ?
     ORDER BY created_at DESC
@@ -80,7 +81,7 @@ $result_casual_uploads = $stmt_casual_uploads->get_result();
                 <?php while ($row = $result_casual_uploads->fetch_assoc()): ?>
                     <li class="list-group-item">
                         <strong>店家名稱:</strong> <?= htmlspecialchars($row['store_name']) ?><br>
-                        <strong>說明:</strong> <?= nl2br(htmlspecialchars($row['description'])) ?><br>
+                        <strong>說明:</strong> <?= nl2br(htmlspecialchars($row['other'])) ?><br>
                         <small class="text-muted">建立時間: <?= htmlspecialchars($row['created_at']) ?></small>
                     </li>
                 <?php endwhile; ?>
